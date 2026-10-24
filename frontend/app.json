@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Gatos da Corte",
+    "slug": "gatos-da-corte",
+    "version": "0.2.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "plugins": [["expo-image-picker", { "microphonePermission": false }]],
+    "android": {
+      "package": "br.org.gatosdacorte.app"
+    },
+    "ios": {
+      "bundleIdentifier": "br.org.gatosdacorte.app"
+    }
+  }
+}
