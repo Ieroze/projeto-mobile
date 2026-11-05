@@ -1,6 +1,6 @@
 # Contrato de API — proposta para alinhamento
 
-Atualizado em 23/10/2026. **Somente `GET /health` está implementado.** Todas as rotas abaixo são candidatas sob `/api/v1`. O mobile segue usando mocks via `src/services`. Validar contrato, permissões, privacidade, publicação e dados com a pessoa responsável pelo backend e a ONG antes de implementar ou integrar. Ver também [o mapa do schema](BACKEND_SCHEMA_PROPOSAL.md).
+Atualizado em 23/10/2026. Implementados: `GET /health`, `GET /api/v1/cats` e `GET /api/v1/cats/{id}`. As demais rotas abaixo seguem como propostas sob `/api/v1`. As demais rotas deste documento ainda precisam de validação. O mobile segue usando mocks via `src/services`. Validar contrato, permissões, privacidade, publicação e dados com a pessoa responsável pelo backend e a ONG antes de implementar ou integrar. Ver também [o mapa do schema](BACKEND_SCHEMA_PROPOSAL.md).
 
 ## Convenções candidatas
 
@@ -18,7 +18,7 @@ Atualizado em 23/10/2026. **Somente `GET /health` está implementado.** Todas as
 
 | Área | Rotas candidatas | Regras/pendências |
 | --- | --- | --- |
-| Gatos | `GET /cats`, `GET /cats/{id}` | Apenas publicados. Filtros de disponibilidade/cuidado; perfil com capa e fotos. Decidir se saúde é pública. |
+| Gatos | `GET /cats`, `GET /cats/{id}` | Implementado: apenas publicados, paginação `limit`/`offset`, filtros `adoptionStatus`/`careStatus`, resposta com `items`/`total` e perfil com capa/fotos. Gato não publicado retorna 404. Registros de saúde não são expostos. |
 | Adoção | `POST /adoption-applications` | Validar dados, consentimento e disponibilidade; servidor gera protocolo e devolve recibo mínimo. |
 | Protocolo | `GET /adoption-applications/{protocol}` | **Condicional** a um método de verificação: saber o protocolo não autoriza acesso a dados pessoais. |
 | Campanhas | `GET /campaigns`, `GET /campaigns/{id}` | Apenas publicadas. Chave/recebedor Pix oficiais e origem de `raisedCents` dependem da ONG. |

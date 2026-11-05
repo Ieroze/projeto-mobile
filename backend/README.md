@@ -1,45 +1,42 @@
-# Backend FastAPI — estado e guia de trabalho
+# Backend FastAPI
 
-Atualizado em 23/10/2026. Hoje existe somente `GET /health`. A aplicação FastAPI está em `app/main.py`; `sql/schema.sql` é uma **referência para discussão**, não uma migration aprovada nem sinal de que o banco esteja criado. Não há integração de domínio, autenticação, upload ou notificações com o app.
+## Estrutura
 
-## Onde estão as propostas
+O backend usa uma separacao MVC adaptada a uma API REST:
 
-- [Contrato de API e DTOs candidatos](../docs/API_CONTRACT_DRAFT.md): rotas públicas/admin, diferenças dos mocks, estados e decisões pendentes.
-- [Mapa do schema](../docs/BACKEND_SCHEMA_PROPOSAL.md): tabelas existentes no SQL e estruturas candidatas ainda ausentes.
-- [Mapa do frontend](../docs/FRONTEND_MAP.md): telas, repositories e mocks que futuramente consumirão a API.
-- [Visão do admin](../docs/ADMIN_OVERVIEW.md): fluxos de gestão do produto.
+- `models/`: entidades SQLAlchemy que mapeiam PostgreSQL.
+- `schemas/`: DTOs Pydantic de entrada e saida da API.
+- `api/`: registro e agrupamento de rotas FastAPI.
+- `controllers/`: adaptacao HTTP e coordenacao dos services.
+- `services/`: regras de negocio.
+- `db/`: engine, base ORM e dependencia de sessao por request.
+- `alembic/`: migrations versionadas do schema.
 
-As rotas e tabelas propostas precisam de alinhamento com o frontend, a ONG e a pessoa responsável pelo backend antes de virar contrato/migration. Não criar endpoints apenas para reproduzir IDs, exemplos fixos, login demonstrativo ou estados temporários dos mocks.
+Controllers nao devem conter SQL. Services coordenam as regras e a camada de dados; models representam persistencia. O app nao cria tabelas automaticamente: use Alembic.
 
-## Executar o que já existe
+## Configuracao local
 
-Com Python compatível com as dependências do projeto, a partir de `backend/`:
+Crie `.env` nesta pasta a partir de `.env.example` e configure `DATABASE_URL`. Nao coloque credenciais reais no arquivo de exemplo nem as versione. O banco inicial e `gatos_da_corte`.
+
+## Comandos
+
+A partir de `backend/`, com o ambiente virtual ativado:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+python -m venv .venv
+# Windows: .venv\\Scripts\\activate
+# macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+alembic current
+alembic upgrade head
 ```
 
-Depois, abrir `http://127.0.0.1:8000/health` (resposta esperada: `status: ok`), `http://127.0.0.1:8000/docs` (Swagger UI) ou `http://127.0.0.1:8000/openapi.json`. A configuração lê `.env` se existir; `database_url` é apenas configuração por enquanto. Não é preciso subir PostgreSQL para testar `/health`.
+O banco que ja recebeu `sql/schema.sql` deve ser registrado com a baseline uma unica vez:
 
-## Precisa de emulador?
+```bash
+alembic stamp 0001_initial_schema
+```
 
-**Não para desenvolver e testar a API.** Postman, curl ou o `/docs` do FastAPI servem para testar rotas HTTP, validação, login, permissões e upload quando essas funcionalidades existirem. Testes automatizados com `pytest` e `fastapi.testclient.TestClient` são recomendados para regras, erros, autorização e regressões; para persistência real, testar também com banco de teste e migrations. Postman sozinho ajuda na exploração manual, mas não substitui essa suíte.
+Em um banco novo, use `alembic upgrade head`. A primeira migration reproduz o schema inicial de `sql/schema.sql`; trate esse arquivo e a migration inicial como baseline congelada. Mudancas futuras devem ser novas revisions Alembic.
 
-**O emulador entra na integração ponta a ponta com o app**, para conferir navegação, formulários, autenticação no dispositivo, escolha/envio de fotos e anexos, rede e exibição dos erros. A pessoa do backend pode trabalhar sem ele; alguém da equipe deve executar esses testes de integração quando os repositories do mobile passarem a usar HTTP. O teste de notificação local em Mais → Configurações não depende do backend; push remoto é um assunto posterior.
-
-Se a API rodar na mesma máquina do emulador Android, `127.0.0.1` dentro do Android aponta para o próprio emulador. O endereço do host é `http://10.0.2.2:8000` no emulador Android padrão. Em dispositivo físico, usar um endereço alcançável na rede ou ambiente de desenvolvimento; configurar HTTPS e regras de rede adequadas antes de produção. Isso só será necessário na fase de integração, não agora.
-
-Referências oficiais: [FastAPI: documentação interativa](https://fastapi.tiangolo.com/tutorial/first-steps/), [FastAPI: TestClient](https://fastapi.tiangolo.com/tutorial/testing/), [FastAPI: arquivos](https://fastapi.tiangolo.com/tutorial/request-files/) e [Android: rede do emulador](https://developer.android.com/studio/run/emulator-networking-address).
-
-## Ordem de implementação sugerida
-
-1. Validar o contrato e as decisões de produto/privacidade: autenticação, dados pessoais, status, publicação, arquivos, Pix e conteúdo opcional. Separar tarefas que dependem da ONG.
-2. Definir DTOs e erros públicos, migrations Alembic e fixtures de teste. `sql/schema.sql` deve ser tratado como insumo, não executado como migration de produção.
-3. Implementar leitura pública e admin de gatos/campanhas/Guia/publicações, com testes de visibilidade; adicionar gestão privada conforme decisões aprovadas.
-4. Implementar envio de adoção/medicamentos e filas administrativas com autenticação, autorização, retenção e auditoria definidas. Arquivos reais só após fechar armazenamento e acesso.
-5. Publicar OpenAPI e exemplos de requests/responses; combinar a troca gradual dos `src/services` com o frontend; validar Postman/TestClient e depois no emulador.
-
-As dependências atuais são sugestões iniciais. Para receber `multipart/form-data` com `UploadFile`, o FastAPI exige `python-multipart`; adicioná-lo apenas quando o fluxo de arquivos for aprovado. Para a suíte com `TestClient`, acrescentar `httpx` e `pytest` como dependências de desenvolvimento quando os testes forem criados.
+O endpoint de disponibilidade segue em `GET /health`; a documentacao interativa do FastAPI fica em `/docs`.

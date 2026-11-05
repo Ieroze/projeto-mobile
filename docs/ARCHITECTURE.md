@@ -33,10 +33,10 @@ Para localizar os arquivos do mobile e seguir o fluxo de adoções/medicamentos,
 
 ## 3. Backend
 
-O backend contem apenas:
+O backend iniciou com:
 
 - bootstrap FastAPI;
-- endpoint `/health`;
+- endpoints `GET /health`, `GET /api/v1/cats` e `GET /api/v1/cats/{id}`;
 - configuracao por variaveis de ambiente;
 - schema SQL de referencia;
 - contrato de API em documento.
