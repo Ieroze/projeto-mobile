@@ -1,1 +1,1 @@
-"""Regras de negócio da aplicação."""
+ï»¿"""Business logic services."""

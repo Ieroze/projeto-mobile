@@ -7,7 +7,7 @@ from sqlalchemy import ARRAY, BigInteger, Boolean, CheckConstraint, Date, DateTi
 from sqlalchemy.dialects.postgresql import JSONB, UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
-from app.models.enums import AdoptionStatus, ApplicationStatus, CareStatus
+from app.models.enums import AdoptionStatus, ApplicationStatus, CareStatus, MedicationStatus, MedicationUrgency, PartnerCategory, PartnerSocialPlatform
 
 def enum_values(cls: type) -> list[str]:
     return [item.value for item in cls]
@@ -19,7 +19,7 @@ class CreatedAt:
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
 class UpdatedTimestamps(CreatedAt):
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
 
 class Admin(UUIDPrimaryKey, UpdatedTimestamps, Base):
     __tablename__ = "admins"
@@ -44,7 +44,7 @@ class Cat(UUIDPrimaryKey, UpdatedTimestamps, Base):
     fiv_felv_negative: Mapped[bool | None] = mapped_column(Boolean)
     traits: Mapped[list[str]] = mapped_column(ARRAY(Text), nullable=False, server_default=text("'{}'"))
     published: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
-    photos: Mapped[list["CatPhoto"]] = relationship(back_populates="cat", order_by="CatPhoto.position")
+    photos: Mapped[list["CatPhoto"]] = relationship(back_populates="cat", order_by="CatPhoto.position", cascade="all, delete-orphan", passive_deletes=True)
 
     @property
     def cover_photo(self) -> CatPhoto | None:
@@ -73,7 +73,7 @@ class AdoptionApplication(UUIDPrimaryKey, Base):
     __tablename__ = "adoption_applications"
     __table_args__ = (Index("idx_adoption_applications_cat_status", "cat_id", "status"),)
     protocol: Mapped[str] = mapped_column(String(40), nullable=False, unique=True)
-    cat_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), ForeignKey("cats.id", ondelete="RESTRICT"), nullable=False)
+    cat_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), ForeignKey("cats.id", ondelete="CASCADE"), nullable=False)
     applicant_name: Mapped[str] = mapped_column(String(160), nullable=False)
     applicant_email: Mapped[str | None] = mapped_column(String(255))
     applicant_phone: Mapped[str] = mapped_column(String(40), nullable=False)
@@ -84,6 +84,33 @@ class AdoptionApplication(UUIDPrimaryKey, Base):
     internal_notes: Mapped[str | None] = mapped_column(Text)
     submitted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+class AdoptionApplicationStatusHistory(UUIDPrimaryKey, Base):
+    __tablename__ = "adoption_application_status_history"
+    application_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), ForeignKey("adoption_applications.id", ondelete="CASCADE"), nullable=False)
+    previous_status: Mapped[ApplicationStatus | None] = mapped_column(SAEnum(ApplicationStatus, name="application_status", values_callable=enum_values))
+    new_status: Mapped[ApplicationStatus] = mapped_column(SAEnum(ApplicationStatus, name="application_status", values_callable=enum_values), nullable=False)
+    note: Mapped[str | None] = mapped_column(Text)
+    changed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+class MedicationRequest(UUIDPrimaryKey, UpdatedTimestamps, Base):
+    __tablename__ = "medication_requests"
+    __table_args__ = (Index("idx_medication_requests_status_submitted", "status", "submitted_at"),)
+    protocol: Mapped[str] = mapped_column(String(40), nullable=False, unique=True)
+    person_name: Mapped[str | None] = mapped_column(String(160))
+    person_email: Mapped[str | None] = mapped_column(String(255))
+    person_phone_whatsapp: Mapped[str | None] = mapped_column(String(40))
+    cat_name: Mapped[str | None] = mapped_column(String(120))
+    cat_age: Mapped[str | None] = mapped_column(String(80))
+    request_reason: Mapped[str | None] = mapped_column(String(500))
+    diagnosis: Mapped[str | None] = mapped_column(String(500))
+    dosage: Mapped[str | None] = mapped_column(String(160))
+    urgency: Mapped[MedicationUrgency | None] = mapped_column(SAEnum(MedicationUrgency, name="medication_urgency", values_callable=enum_values))
+    pickup_availability: Mapped[str | None] = mapped_column(String(160))
+    consent_privacy: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
+    status: Mapped[MedicationStatus] = mapped_column(SAEnum(MedicationStatus, name="medication_status", values_callable=enum_values), nullable=False, server_default=text("'submitted'"))
+    internal_notes: Mapped[str | None] = mapped_column(Text)
+    submitted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
 class Campaign(UUIDPrimaryKey, UpdatedTimestamps, Base):
     __tablename__ = "campaigns"
@@ -115,3 +142,23 @@ class GuideArticle(UUIDPrimaryKey, UpdatedTimestamps, Base):
     references_text: Mapped[str | None] = mapped_column(Text)
     published: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+class Partner(UUIDPrimaryKey, UpdatedTimestamps, Base):
+    __tablename__ = "partners"
+    __table_args__ = (Index("idx_partners_public_listing", "published", "position", "name"),)
+    name: Mapped[str] = mapped_column(String(160), nullable=False)
+    category: Mapped[PartnerCategory] = mapped_column(SAEnum(PartnerCategory, name="partner_category", values_callable=enum_values), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    position: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    published: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
+    socials: Mapped[list["PartnerSocial"]] = relationship(back_populates="partner", cascade="all, delete-orphan", order_by="PartnerSocial.position")
+
+class PartnerSocial(UUIDPrimaryKey, Base):
+    __tablename__ = "partner_socials"
+    __table_args__ = (Index("idx_partner_socials_partner", "partner_id", "position"),)
+    partner_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), ForeignKey("partners.id", ondelete="CASCADE"), nullable=False)
+    platform: Mapped[PartnerSocialPlatform] = mapped_column(SAEnum(PartnerSocialPlatform, name="partner_social_platform", values_callable=enum_values), nullable=False)
+    label: Mapped[str] = mapped_column(String(80), nullable=False)
+    url: Mapped[str | None] = mapped_column(Text)
+    position: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    partner: Mapped[Partner] = relationship(back_populates="socials")

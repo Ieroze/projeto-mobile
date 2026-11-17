@@ -57,7 +57,7 @@ O schema inicial separa:
 - categorias e artigos do guia;
 - administradores.
 
-Solicitações de medicamentos, publicações administrativas, parceiros e informações institucionais existem apenas como mocks no frontend e não têm tabelas no SQL de referência. Sessões/revogação e auditoria também dependem de decisão. Alterações de schema exigem alinhamento com a pessoa responsável pelo backend e a ONG.
+Solicitações de medicamentos, publicações administrativas e informações institucionais existem apenas como mocks no frontend e não têm tabelas no SQL de referência. Parceiros ganharam tabelas na migration `0002_partners`; a leitura pública e o CRUD administrativo de teste usam esse schema. Sessões/revogação e auditoria também dependem de decisão. Alterações de schema exigem alinhamento com a pessoa responsável pelo backend e a ONG.
 
 Status de adocao e status de cuidado sao separados para evitar modelagem ambigua.
 

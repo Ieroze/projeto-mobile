@@ -1,0 +1,94 @@
+GATOS DA CORTE — BACKEND MAP
+Versioned API prefix: /api/v1
+Application entrypoint: app.main:app
+
+REQUEST FLOW
+=============
+HTTP request
+  -> app/main.py
+  -> app/api/router.py
+  -> app/api/<domain>.py              route, dependency, query/body validation
+  -> app/controllers/<domain>_controller.py
+  -> app/services/<domain>_service.py business rules and SQLAlchemy queries
+  -> app/models/entities.py           PostgreSQL mapping
+  -> app/db/database.py               engine and request-scoped Session
+
+Response path:
+  model/service -> controller -> Pydantic response schema -> HTTP response
+
+MODULES
+=======
+app/main.py                            FastAPI application
+app/api/router.py                      API router composition
+app/api/system.py                      /health
+app/api/cats.py                        public cats and admin cat CRUD
+app/api/cat_admin_resources.py         admin cat photos and private health records
+app/api/partners.py                    public partners and admin partner CRUD
+app/api/campaigns.py                   public campaigns and admin campaign CRUD
+app/api/guide.py                       public Guide and admin category/article CRUD
+app/api/adoptions.py                   adoption intake, admin status and history
+app/api/medications.py                 medication intake and admin status
+
+app/controllers/                       HTTP orchestration and error translation
+app/services/                           business rules and data access
+app/schemas/                            Pydantic input/output DTOs
+app/models/entities.py                 SQLAlchemy entities, relations and indexes
+app/models/enums.py                    domain status/category enums
+app/db/base.py                          declarative ORM Base
+app/db/database.py                      engine and Session dependency
+app/db/seed.py                          repeatable demo cats and partners
+app/core/config.py                      APP_NAME, APP_ENV, DATABASE_URL
+
+DOMAIN RELATIONS
+================
+Cat
+  +-- CatPhoto (URL and metadata; no binary upload)
+  +-- CatHealthRecord (private admin data)
+  +-- AdoptionApplication
+        +-- AdoptionApplicationStatusHistory
+
+Partner
+  +-- PartnerSocial
+
+GuideCategory
+  +-- GuideArticle
+
+Campaign
+
+MedicationRequest
+
+ROUTE GROUPS
+============
+Public reads:
+  /cats
+  /partners
+  /campaigns
+  /guide/categories
+  /guide/articles
+
+Development-only administration:
+  /admin/cats
+  /admin/cats/{catId}/photos
+  /admin/cats/{catId}/health-records
+  /admin/partners
+  /admin/campaigns
+  /admin/guide/categories
+  /admin/guide/articles
+  /admin/adoption-applications
+  /admin/medication-requests
+
+Development-only intake:
+  /adoption-applications
+  /medication-requests
+
+SCHEMA HISTORY
+==============
+0001_initial_schema               baseline tables
+0002_partners                     partners and social links
+0003_cat_delete_cascade           cat deletion cascades to adoption requests
+0004_adoption_history_medications adoption status history and medication requests
+
+Operational note: a migration file in the repository is not proof that the
+database has applied it. Check Alembic's current revision before using routes
+whose tables or PostgreSQL enums were added by a later revision. Admin and
+intake routes above are unauthenticated and must remain in APP_ENV=development.

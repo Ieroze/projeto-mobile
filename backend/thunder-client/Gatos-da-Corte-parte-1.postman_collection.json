@@ -1,0 +1,703 @@
+{
+  "info": {
+    "_postman_id": "6ea7c747-3d33-4cec-8807-65c1727a5411",
+    "name": "Gatos da Corte API (local) - Parte 1",
+    "description": "Parte 1 da cole??o para Thunder Client. Inclui as pastas at? categorias administrativas do Guia, totalizando menos de 50 requisi??es. A pr?xima cole??o come?ar? por artigos administrativos do Guia.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "catId",
+      "value": "3dfed3e6-2402-4d10-b6c4-e194053d061c",
+      "type": "string"
+    },
+    {
+      "key": "partnerId",
+      "value": "b5da258e-8c65-4ce4-bfd1-f372b9a364a9",
+      "type": "string"
+    },
+    {
+      "key": "campaignId",
+      "value": "f28967f9-4b6d-43b0-82f3-bf40adf22bae",
+      "type": "string"
+    },
+    {
+      "key": "guideCategoryId",
+      "value": "a920c52f-5ae3-43f9-8a57-0a2dab79eaa7",
+      "type": "string"
+    },
+    {
+      "key": "guideArticleId",
+      "value": "4a1444c6-a032-4686-9c49-6fdd419247bd",
+      "type": "string"
+    },
+    {
+      "key": "catPhotoId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "catHealthRecordId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adoptionApplicationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "medicationRequestId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Sistema",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/health"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gatos públicos",
+      "item": [
+        {
+          "name": "Listar gatos publicados",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cats?limit=20&offset=0"
+            }
+          }
+        },
+        {
+          "name": "Filtrar gatos por adoção",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cats?adoptionStatus=available&limit=20&offset=0"
+            }
+          }
+        },
+        {
+          "name": "Ver gato publicado por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cats/{{catId}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gatos administrativos (development)",
+      "item": [
+        {
+          "name": "Listar todos os gatos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/cats?limit=20&offset=0"
+            }
+          }
+        },
+        {
+          "name": "Ver gato administrativo por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/cats/{{catId}}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar gato (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shortDescription\": \"Descrição atualizada pelo Thunder Client.\",\n  \"traits\": [\"carinhosa\", \"curiosa\", \"sociável\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/cats/{{catId}}"
+            }
+          }
+        },
+        {
+          "name": "Excluir gato",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/cats/{{catId}}"
+            }
+          }
+        },
+        {
+          "name": "Criar gato - exemplo 1",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/cats"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Amora\",\n  \"sex\": \"female\",\n  \"approximateAgeMonths\": 14,\n  \"shortDescription\": \"Curiosa e carinhosa.\",\n  \"description\": \"Gata fict?cia para teste local.\",\n  \"adoptionStatus\": \"available\",\n  \"careStatus\": \"healthy\",\n  \"castrated\": true,\n  \"vaccinated\": true,\n  \"fivFelvNegative\": true,\n  \"traits\": [\n    \"carinhosa\",\n    \"curiosa\"\n  ],\n  \"published\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar gato - exemplo 2",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/cats"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tico\",\n  \"sex\": \"male\",\n  \"approximateAgeMonths\": 8,\n  \"shortDescription\": \"Brincalh?o e soci?vel.\",\n  \"description\": \"Gato fict?cio para teste local.\",\n  \"adoptionStatus\": \"available\",\n  \"careStatus\": \"healthy\",\n  \"castrated\": false,\n  \"vaccinated\": true,\n  \"traits\": [\n    \"brincalh?o\",\n    \"soci?vel\"\n  ],\n  \"published\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar gato - exemplo 3",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/cats"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jujuba\",\n  \"sex\": \"female\",\n  \"approximateAgeMonths\": 30,\n  \"shortDescription\": \"Tranquila e independente.\",\n  \"description\": \"Gata fict?cia para teste local.\",\n  \"adoptionStatus\": \"not_available\",\n  \"careStatus\": \"treatment\",\n  \"castrated\": true,\n  \"vaccinated\": true,\n  \"traits\": [\n    \"tranquila\"\n  ],\n  \"published\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Substituir recurso (PUT)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/cats/{{catId}}"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Amora\",\n  \"sex\": \"female\",\n  \"approximateAgeMonths\": 14,\n  \"shortDescription\": \"Curiosa e carinhosa.\",\n  \"description\": \"Gata fict?cia para teste local.\",\n  \"adoptionStatus\": \"available\",\n  \"careStatus\": \"healthy\",\n  \"castrated\": true,\n  \"vaccinated\": true,\n  \"fivFelvNegative\": true,\n  \"traits\": [\n    \"carinhosa\",\n    \"curiosa\"\n  ],\n  \"published\": true\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Parceiros públicos",
+      "item": [
+        {
+          "name": "Listar parceiros publicados",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/partners?limit=20&offset=0"
+            }
+          }
+        },
+        {
+          "name": "Filtrar parceiros por categoria",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/partners?category=veterinary&limit=20&offset=0"
+            }
+          }
+        },
+        {
+          "name": "Ver parceiro publicado por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/partners/{{partnerId}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Parceiros administrativos (development)",
+      "item": [
+        {
+          "name": "Listar todos os parceiros",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/partners?limit=20&offset=0"
+            }
+          }
+        },
+        {
+          "name": "Ver parceiro administrativo por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/partners/{{partnerId}}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar parceiro (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Descrição atualizada pelo Thunder Client.\",\n  \"published\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/partners/{{partnerId}}"
+            }
+          }
+        },
+        {
+          "name": "Excluir parceiro",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/partners/{{partnerId}}"
+            }
+          }
+        },
+        {
+          "name": "Criar parceiro - exemplo 1",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/partners"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cl?nica Bicho Feliz\",\n  \"category\": \"veterinary\",\n  \"description\": \"Parceiro fict?cio para testes locais.\",\n  \"position\": 1,\n  \"published\": true,\n  \"socials\": [\n    {\n      \"platform\": \"instagram\",\n      \"label\": \"Instagram\",\n      \"url\": \"https://instagram.com/example\"\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar parceiro - exemplo 2",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/partners"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cont?bil Miaul\",\n  \"category\": \"accounting\",\n  \"description\": \"Parceiro fict?cio para testes locais.\",\n  \"position\": 2,\n  \"published\": false,\n  \"socials\": [\n    {\n      \"platform\": \"website\",\n      \"label\": \"Site\",\n      \"url\": \"https://example.com\"\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar parceiro - exemplo 3",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/partners"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"FotoGato\",\n  \"category\": \"photography\",\n  \"description\": \"Parceiro fict?cio para testes locais.\",\n  \"position\": 3,\n  \"published\": true,\n  \"socials\": [\n    {\n      \"platform\": \"facebook\",\n      \"label\": \"Facebook\",\n      \"url\": \"https://facebook.com/example\"\n    },\n    {\n      \"platform\": \"whatsapp\",\n      \"label\": \"WhatsApp\",\n      \"url\": \"https://wa.me/5511999999999\"\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Substituir recurso (PUT)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/partners/{{partnerId}}"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cl?nica Bicho Feliz\",\n  \"category\": \"veterinary\",\n  \"description\": \"Parceiro fict?cio para testes locais.\",\n  \"position\": 1,\n  \"published\": true,\n  \"socials\": [\n    {\n      \"platform\": \"instagram\",\n      \"label\": \"Instagram\",\n      \"url\": \"https://instagram.com/example\"\n    }\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Campanhas p?blicas",
+      "item": [
+        {
+          "name": "Listar campanhas publicadas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/campaigns?limit=20&offset=0"
+            }
+          }
+        },
+        {
+          "name": "Ver campanha publicada por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/campaigns/{{campaignId}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Campanhas administrativas (development)",
+      "item": [
+        {
+          "name": "Listar todas as campanhas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/campaigns?limit=20&offset=0"
+            }
+          }
+        },
+        {
+          "name": "Ver campanha administrativa por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/campaigns/{{campaignId}}"
+            }
+          }
+        },
+        {
+          "name": "Publicar e atualizar campanha (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/campaigns/{{campaignId}}"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Descri??o atualizada pelo Thunder Client.\",\n  \"published\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir campanha",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/campaigns/{{campaignId}}"
+            }
+          }
+        },
+        {
+          "name": "Criar campanha - exemplo 1",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/campaigns"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Ra??o para o inverno\",\n  \"description\": \"Campanha fict?cia para testes locais.\",\n  \"goalCents\": 250000,\n  \"raisedCents\": 75000,\n  \"pixKey\": \"pix-teste-1\",\n  \"startsOn\": \"2026-11-01\",\n  \"endsOn\": \"2026-12-31\",\n  \"published\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar campanha - exemplo 2",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/campaigns"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Vacina??o anual\",\n  \"description\": \"Campanha fict?cia para testes locais.\",\n  \"goalCents\": 180000,\n  \"raisedCents\": 0,\n  \"pixKey\": \"pix-teste-2\",\n  \"startsOn\": \"2026-11-15\",\n  \"endsOn\": \"2027-01-15\",\n  \"published\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar campanha - exemplo 3",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/campaigns"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Reforma do gatil\",\n  \"description\": \"Campanha fict?cia para testes locais.\",\n  \"goalCents\": 500000,\n  \"raisedCents\": 125000,\n  \"pixKey\": \"pix-teste-3\",\n  \"startsOn\": \"2026-12-01\",\n  \"endsOn\": \"2027-02-28\",\n  \"published\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Substituir recurso (PUT)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/campaigns/{{campaignId}}"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Ra??o para o inverno\",\n  \"description\": \"Campanha fict?cia para testes locais.\",\n  \"goalCents\": 250000,\n  \"raisedCents\": 75000,\n  \"pixKey\": \"pix-teste-1\",\n  \"startsOn\": \"2026-11-01\",\n  \"endsOn\": \"2026-12-31\",\n  \"published\": false\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Guia p?blico",
+      "item": [
+        {
+          "name": "Listar categorias publicadas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/guide/categories?limit=20&offset=0"
+            }
+          }
+        },
+        {
+          "name": "Listar artigos publicados por categoria",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/guide/articles?categoryId={{guideCategoryId}}&limit=20&offset=0"
+            }
+          }
+        },
+        {
+          "name": "Ver artigo publicado por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/guide/articles/{{guideArticleId}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Guia: categorias administrativas (development)",
+      "item": [
+        {
+          "name": "Listar categorias (inclui rascunhos)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/guide/categories?limit=20&offset=0"
+            }
+          }
+        },
+        {
+          "name": "Ver categoria administrativa por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/guide/categories/{{guideCategoryId}}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar categoria (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/guide/categories/{{guideCategoryId}}"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"position\": 1,\n  \"published\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir categoria",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/guide/categories/{{guideCategoryId}}"
+            }
+          }
+        },
+        {
+          "name": "Criar categoria - exemplo 1",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/guide/categories"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alimenta??o\",\n  \"slug\": \"alimentacao-teste\",\n  \"position\": 1,\n  \"published\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar categoria - exemplo 2",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/guide/categories"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sa?de preventiva\",\n  \"slug\": \"saude-preventiva-teste\",\n  \"position\": 2,\n  \"published\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar categoria - exemplo 3",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/guide/categories"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Adapta??o\",\n  \"slug\": \"adaptacao-teste\",\n  \"position\": 3,\n  \"published\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Substituir recurso (PUT)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/guide/categories/{{guideCategoryId}}"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alimenta??o\",\n  \"slug\": \"alimentacao-teste\",\n  \"position\": 1,\n  \"published\": true\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

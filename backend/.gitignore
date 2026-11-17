@@ -3,3 +3,6 @@ __pycache__/
 .pytest_cache/
 .env
 *.pyc
+
+# Contextos de retomada locais (inclui versões futuras)
+/context*.md

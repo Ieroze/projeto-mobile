@@ -19,3 +19,28 @@ class ApplicationStatus(str, Enum):
     REJECTED = "rejected"
     COMPLETED = "completed"
     CANCELLED = "cancelled"
+
+class MedicationStatus(str, Enum):
+    SUBMITTED = "submitted"
+    UNDER_REVIEW = "under_review"
+    NEEDS_INFORMATION = "needs_information"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
+class MedicationUrgency(str, Enum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+
+class PartnerCategory(str, Enum):
+    ACCOUNTING = "accounting"
+    VETERINARY = "veterinary"
+    PHOTOGRAPHY = "photography"
+
+class PartnerSocialPlatform(str, Enum):
+    INSTAGRAM = "instagram"
+    FACEBOOK = "facebook"
+    WHATSAPP = "whatsapp"
+    WEBSITE = "website"
